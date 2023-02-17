@@ -55,5 +55,6 @@ services:
     image: ghcr.io/chroma-case/front:main
     depends_on:
       - "back"
+      - "scorometer"
     env_file:
       - .env
