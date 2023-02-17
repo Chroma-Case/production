@@ -21,8 +21,39 @@ services:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-  front:
-    image: jasonrm/dummy-server
+  back:
+    image: ghcr.io/chroma-case/back:main
     ports:
-      - "8080:8080"
-    restart: unless-stopped
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    volumes:
+      - ./musics:/musics
+  scorometer:
+    image: ghcr.io/chroma-case/scorometer:main
+    ports:
+      - "6543:6543"
+    volumes:
+      - ./musics:/musics
+  db:
+    container_name: db
+    image: postgres:alpine3.14
+    environment:
+    - POSTGRES_USER=${POSTGRES_USER}
+    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    - POSTGRES_DB=${POSTGRES_DB}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  front:
+    image: ghcr.io/chroma-case/front:main
+    depends_on:
+      - "back"
+    env_file:
+      - .env
