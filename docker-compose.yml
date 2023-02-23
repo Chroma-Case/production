@@ -14,6 +14,7 @@ services:
       - "80:80"
       - "443:443"
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
   certbot:
     image: certbot/certbot
     restart: unless-stopped
@@ -21,6 +22,7 @@ services:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
   back:
     image: ghcr.io/chroma-case/back:main
     ports:
@@ -32,12 +34,16 @@ services:
       - .env
     volumes:
       - ./musics:/musics
+    restart: unless-stopped
+
   scorometer:
     image: ghcr.io/chroma-case/scorometer:main
     ports:
       - "6543:6543"
     volumes:
       - ./musics:/musics
+    restart: unless-stopped
+
   db:
     container_name: db
     image: postgres:alpine3.14
@@ -50,6 +56,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   front:
     image: ghcr.io/chroma-case/front:main
@@ -58,3 +65,4 @@ services:
       - "scorometer"
     env_file:
       - .env
+    restart: unless-stopped
