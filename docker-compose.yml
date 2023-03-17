@@ -57,6 +57,8 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    volumes:
+      - db:/var/lib/postgresql/data
 
   front:
     image: ghcr.io/chroma-case/front:main
@@ -66,3 +68,6 @@ services:
     env_file:
       - .env
     restart: unless-stopped
+
+volumes:
+  db:
