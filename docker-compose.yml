@@ -41,7 +41,7 @@ services:
     ports:
       - "6543:6543"
     volumes:
-      - ./musics:/musics
+      - ./assets:/assets
     restart: unless-stopped
 
   db:
