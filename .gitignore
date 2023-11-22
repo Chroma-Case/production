@@ -1,3 +1,8 @@
 /data/certbot
 /musics
 .env
+assets
+# profile images
+/data/*.jpg
+# cache of the partition svgs and cursor data
+/data/cache
