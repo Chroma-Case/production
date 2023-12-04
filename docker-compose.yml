@@ -47,6 +47,8 @@ services:
 
   scorometer:
     image: ghcr.io/chroma-case/scorometer:main
+    env_file:
+      - .env
     ports:
       - "6543:6543"
     volumes:
