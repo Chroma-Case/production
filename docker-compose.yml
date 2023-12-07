@@ -6,6 +6,7 @@ networks:
 volumes:
   db:
   scoro_logs:
+  meilisearch:
 
 
 services:
@@ -81,6 +82,16 @@ services:
     depends_on:
       - "back"
       - "scorometer"
+    env_file:
+      - .env
+    restart: unless-stopped
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.4
+    ports:
+      - "7700:7700"
+    volumes:
+      - meilisearch:/meili_data
     env_file:
       - .env
     restart: unless-stopped
